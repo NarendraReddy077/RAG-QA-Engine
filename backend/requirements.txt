@@ -9,4 +9,4 @@ chromadb
 pydantic
 bs4
 python-multipart
-pypdf2
+pypdf

@@ -44,7 +44,7 @@ def clean_and_split(text, source):
     docs = [
         Document(page_content=s.strip(), metadata={"source": source})
         for s in splits
-        if len(s.strip()) > 50  # remove noise
+        if len(s.strip()) > 10  # Reduced threshold to avoid ignoring short but valid chunks
     ]
     return docs
 
@@ -77,22 +77,36 @@ def ingest_url(url: str):
 
 
 def ingest_pdf(file_path: str):
-    loader = PyPDFLoader(file_path)
-    docs = loader.load()
+    print(f"RAG: Ingesting PDF from {file_path}")
+    try:
+        loader = PyPDFLoader(file_path)
+        docs = loader.load()
+        print(f"RAG: Loaded {len(docs)} pages from PDF")
 
-    splitter = RecursiveCharacterTextSplitter(
-        chunk_size=500,
-        chunk_overlap=100
-    )
-    splits = splitter.split_documents(docs)
+        splitter = RecursiveCharacterTextSplitter(
+            chunk_size=500,
+            chunk_overlap=100
+        )
+        splits = splitter.split_documents(docs)
+        print(f"RAG: Split PDF into {len(splits)} chunks")
 
-    clean_docs = [
-        Document(page_content=d.page_content.strip(), metadata={"source": file_path})
-        for d in splits
-        if len(d.page_content.strip()) > 50
-    ]
-
-    vectorstore.add_documents(clean_docs)
+        clean_docs = [
+            Document(page_content=d.page_content.strip(), metadata={"source": os.path.basename(file_path).replace("temp_", "")})
+            for d in splits
+            if len(d.page_content.strip()) > 10
+        ]
+        
+        if clean_docs:
+            vectorstore.add_documents(clean_docs)
+            print(f"RAG: Added {len(clean_docs)} chunks to vector store")
+        else:
+            print("RAG: No valid chunks found in PDF after filtering")
+            
+    except Exception as e:
+        print(f"RAG ERROR: Failed to ingest PDF: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        raise e
 
 def query_rag(query: str):
     # Step 1: Retrieve with scores
