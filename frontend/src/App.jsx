@@ -87,7 +87,9 @@ function App() {
 
   const handleIngest = async (e) => {
     e.preventDefault();
-    if (!ingestContent.trim()) return;
+    if (!ingestContent) return;
+    if (typeof ingestContent === 'string' && !ingestContent.trim()) return;
+    
     setIsIngesting(true);
     try {
       await ingestData(ingestType, ingestContent);
