@@ -3,9 +3,9 @@ from models import ChatRequest, ChatResponse
 import traceback
 import os
 
-router = APIRouter()
+from config import settings
 
-DUMMY_EMAIL = "user@example.com"
+router = APIRouter()
 
 @router.post("/ingest")
 async def ingest_data(text: str = Form(None), url: str = Form(None), file: UploadFile = File(None)):
@@ -36,7 +36,7 @@ def chat_endpoint(request: ChatRequest):
         from services.db import get_or_create_user, create_chat_session, add_chat_message, log_query
         from services.rag import query_rag
         
-        user_id = get_or_create_user(DUMMY_EMAIL)
+        user_id = get_or_create_user(settings.DUMMY_EMAIL)
         log_query(user_id, request.query)
         
         session_id = request.session_id
@@ -65,7 +65,7 @@ def chat_endpoint(request: ChatRequest):
 def history_endpoint():
     try:
         from services.db import get_or_create_user, get_chat_sessions
-        user_id = get_or_create_user(DUMMY_EMAIL)
+        user_id = get_or_create_user(settings.DUMMY_EMAIL)
         sessions = get_chat_sessions(user_id)
         return {"sessions": sessions}
     except Exception as e:

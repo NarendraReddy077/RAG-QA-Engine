@@ -1,6 +1,5 @@
 import os
 import bs4
-from langchain_classic.chains import create_retrieval_chain
 from langchain_classic.chains.combine_documents import create_stuff_documents_chain
 from langchain_community.document_loaders import WebBaseLoader, PyPDFLoader
 from langchain_huggingface import HuggingFaceEmbeddings
@@ -9,16 +8,25 @@ from langchain_ollama import ChatOllama
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_classic.schema import Document
+from config import settings
 
-embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
+embeddings = HuggingFaceEmbeddings(model_name=settings.EMBEDDING_MODEL_NAME)
 
-persist_directory = "./chroma_db"
+persist_directory = settings.CHROMA_PERSIST_DIRECTORY
 vectorstore = Chroma(
     embedding_function=embeddings,
     persist_directory=persist_directory
 )
 
-llm = ChatOllama(model="gemma:2b")
+headers = {}
+if settings.OLLAMA_API_KEY:
+    headers["Authorization"] = f"Bearer {settings.OLLAMA_API_KEY}"
+
+llm = ChatOllama(
+    model=settings.OLLAMA_MODEL,
+    base_url=settings.OLLAMA_BASE_URL,
+    headers=headers
+)
 
 system_prompt = (
     "You are a helpful assistant for question-answering tasks.\n"
@@ -36,8 +44,8 @@ prompt = ChatPromptTemplate.from_messages([
 
 def clean_and_split(text, source):
     splitter = RecursiveCharacterTextSplitter(
-        chunk_size=500,
-        chunk_overlap=100
+        chunk_size=settings.CHUNK_SIZE,
+        chunk_overlap=settings.CHUNK_OVERLAP
     )
     splits = splitter.split_text(text)
 
@@ -62,8 +70,8 @@ def ingest_url(url: str):
     docs = loader.load()
 
     splitter = RecursiveCharacterTextSplitter(
-        chunk_size=500,
-        chunk_overlap=100
+        chunk_size=settings.CHUNK_SIZE,
+        chunk_overlap=settings.CHUNK_OVERLAP
     )
     splits = splitter.split_documents(docs)
 
@@ -84,8 +92,8 @@ def ingest_pdf(file_path: str):
         print(f"RAG: Loaded {len(docs)} pages from PDF")
 
         splitter = RecursiveCharacterTextSplitter(
-            chunk_size=500,
-            chunk_overlap=100
+            chunk_size=settings.CHUNK_SIZE,
+            chunk_overlap=settings.CHUNK_OVERLAP
         )
         splits = splitter.split_documents(docs)
         print(f"RAG: Split PDF into {len(splits)} chunks")
@@ -110,7 +118,7 @@ def ingest_pdf(file_path: str):
 
 def query_rag(query: str):
     # Step 1: Retrieve with scores
-    docs_with_scores = vectorstore.similarity_search_with_score(query, k=3)
+    docs_with_scores = vectorstore.similarity_search_with_score(query, k=settings.RAG_K)
 
     print(f"\n--- RAG DEBUG: Query: '{query}' ---")
     for i, (doc, score) in enumerate(docs_with_scores):
@@ -118,7 +126,7 @@ def query_rag(query: str):
     print("-----------------------------------\n")
 
     # Step 2: Filter relevant docs
-    threshold = 1.0
+    threshold = settings.RAG_SCORE_THRESHOLD
     relevant_docs_with_scores = [
         (doc, score) for doc, score in docs_with_scores if score < threshold
     ]
