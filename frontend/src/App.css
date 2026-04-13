@@ -1,1 +1,174 @@
-/* Removed default styling */
+/* Custom color scheme to avoid AI-generated template look */
+
+:root {
+  --bg-primary: #1a1a1a; /* Dark slate background */
+  --bg-secondary: #2d2d2d; /* Slightly lighter dark */
+  --bg-accent: #3a3a3a; /* For hover states */
+  --text-primary: #e0e0e0; /* Light text */
+  --text-secondary: #b0b0b0; /* Muted text */
+  --primary-green: #10b981; /* Emerald green */
+  --primary-green-hover: #059669; /* Darker green */
+  --accent-purple: #8b5cf6; /* Purple */
+  --accent-purple-hover: #7c3aed; /* Darker purple */
+  --border-color: #404040; /* Subtle borders */
+  --error-red: #ef4444; /* Red for errors */
+}
+
+/* Override body background */
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+/* Main app container */
+.App {
+  background-color: var(--bg-primary);
+}
+
+/* Sidebar */
+.sidebar {
+  background-color: var(--bg-secondary);
+  border-right: 1px solid var(--border-color);
+}
+
+/* Sidebar header */
+.sidebar-header {
+  border-bottom: 1px solid var(--border-color);
+}
+
+/* History title with custom gradient */
+.history-title {
+  background: #6ad1df;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* New chat button */
+.new-chat-btn {
+  color: var(--text-secondary);
+}
+
+.new-chat-btn:hover {
+  background-color: var(--bg-accent);
+}
+
+/* Session items */
+.session-item {
+  color: var(--text-primary);
+}
+
+.session-item:hover {
+  background-color: var(--bg-accent);
+}
+
+.session-item.active {
+  background-color: rgba(16, 185, 129, 0.2); /* Green tint */
+  color: var(--primary-green);
+}
+
+/* Delete button */
+.delete-btn {
+  color: var(--error-red);
+}
+
+.delete-btn:hover {
+  background-color: rgba(239, 68, 68, 0.1);
+}
+
+/* Add Knowledge button */
+.add-knowledge-btn {
+  background: #6ad1df; 
+  color: #f8f9fa;
+  border-radius: 8px;
+  letter-spacing: 0.5px;
+  transition: all 0.2s ease;
+}
+
+.add-knowledge-btn:hover {
+  background: #333333;
+  box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.05);
+}
+
+/* Manage Knowledge button */
+.manage-knowledge-btn {
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+}
+
+.manage-knowledge-btn:hover {
+  background-color: var(--bg-accent);
+}
+
+/* Main chat area */
+.chat-area {
+  background-color: var(--bg-primary);
+}
+
+/* Chat header */
+.chat-header {
+  background-color: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-color);
+}
+
+/* Messages */
+.message-user {
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+.message-assistant {
+  background-color: var(--bg-accent);
+  color: var(--text-primary);
+}
+
+/* Input area */
+.input-area {
+  background-color: var(--bg-secondary);
+  border-top: 1px solid var(--border-color);
+}
+
+/* Input field */
+.input-field {
+  background-color: var(--bg-accent);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 1ch;
+}
+
+.input-field:focus {
+  border-color: var(--primary-green);
+}
+
+/* Send button */
+.send-btn {
+  background-color: var(--primary-green);
+  color: white;
+}
+
+.send-btn:hover {
+  background-color: var(--primary-green-hover);
+}
+
+/* Modals */
+.modal-overlay {
+  background-color: rgba(0, 0, 0, 0.7);
+}
+
+.modal-content {
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+}
+
+/* Loading spinner */
+.loading-spinner {
+  color: var(--primary-green);
+}
+
+/* Sources */
+.sources {
+  background-color: var(--bg-accent);
+  border: 1px solid var(--border-color);
+}
